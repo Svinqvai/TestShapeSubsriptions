@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package learn2.program.billing_util;
+package learn2.program.testshapesubsriptions.billing_util;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -28,6 +28,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+
 
 import com.android.vending.billing.IInAppBillingService;
 

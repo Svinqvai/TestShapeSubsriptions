@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-package learn2.program.billing_util;
+package learn2.program.testshapesubsriptions.billing_util;
 
 import android.text.TextUtils;
 import android.util.Log;
-
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
