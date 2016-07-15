@@ -15,9 +15,12 @@ public class SubscriptionPurchaseListener implements IabHelper.OnIabPurchaseFini
 
     private final IabHelper mHelper;
 
-    public SubscriptionPurchaseListener(List<String> subscriptions,IabHelper mHelper){
+    private final int position;
+
+    public SubscriptionPurchaseListener(List<String> subscriptions,IabHelper mHelper,int position){
         this.subscriptions = subscriptions;
         this.mHelper = mHelper;
+        this.position = position;
     }
 
 
@@ -29,8 +32,7 @@ public class SubscriptionPurchaseListener implements IabHelper.OnIabPurchaseFini
         }
 
         if (info != null) {
-            //TODO not 0 but the selected item
-            if(info.getSku().equalsIgnoreCase(subscriptions.get(0))){
+            if(info.getSku().equalsIgnoreCase(subscriptions.get(position))){
                 mHelper.consumeAsync(info,new SubscriptionConsumeFinishedListener());
 
                 Log.d(Constants.APP_TAG, "Scu: " + info.getSku());
