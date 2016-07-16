@@ -35,9 +35,9 @@ public class SubscriptionPurchaseListener implements IabHelper.OnIabPurchaseFini
             if(info.getSku().equalsIgnoreCase(subscriptions.get(position))){
                 mHelper.consumeAsync(info,new SubscriptionConsumeFinishedListener());
 
-                Log.d(Constants.APP_TAG, "Scu: " + info.getSku());
-                Log.d(Constants.APP_TAG, "Order ID : " + info.getOrderId());
-                Log.d(Constants.APP_TAG, "DeveloperPayload: " + info.getDeveloperPayload());
+                Log.d(Constants.APP_TAG, " SubscriptionPurchaseListener Scu: " + info.getSku());
+                Log.d(Constants.APP_TAG, "SubscriptionPurchaseListener Order ID : " + info.getOrderId());
+                Log.d(Constants.APP_TAG, "SubscriptionPurchaseListener DeveloperPayload: " + info.getDeveloperPayload());
             }
         }
     }

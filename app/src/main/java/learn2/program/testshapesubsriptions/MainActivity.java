@@ -7,10 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import learn2.program.testshapesubsriptions.billing_util.IabHelper;
 import learn2.program.testshapesubsriptions.billing_util.IabResult;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        subscriptionsKeys = Arrays.asList("learn2.program.testSubscriptionOneMonth", "learn2.program.testSubscriptionThreeMonth", "learn2.program.testSubscriptionSixMonth", "learn2.program.testSubscriptionOneYear");
+        subscriptionsKeys = Arrays.asList("learn2.program.testsubscriptiononemonth", "learn2.program.testsubscriptionthreemonth", "learn2.program.testsubscriptionsixmonth", "learn2.program.testsubscriptiononeyear");
 
         oneMonthBtn = (Button) findViewById(R.id.oneMonthBtn);
         threeMonthsBtn = (Button) findViewById(R.id.threeMonthsBtn);
@@ -69,10 +69,13 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(Constants.APP_TAG, "SUCCESS: " + result);
                 }
 
-                // Have we been disposed of in the meantime? If so, quit.
-                if (mHelper == null) return;
+                if (mHelper == null) {
+                    return;
+                }
                 mHelper.queryInventoryAsync(true, subscriptionsKeys, new SubscriptionOnQueryInventoryFinished(subscriptionsKeys));
-
+                if (SubscriptionOnQueryInventoryFinished.hasSubscription) {
+                    pearImgView.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -83,16 +86,16 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
 
             if (view == oneMonthBtn) {
-               // Toast.makeText(MainActivity.this, "One Month", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(MainActivity.this, "One Month", Toast.LENGTH_SHORT).show();
                 itemClicked = 0;
             } else if (view == threeMonthsBtn) {
-             //   Toast.makeText(MainActivity.this, "Three Months", Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(MainActivity.this, "Three Months", Toast.LENGTH_SHORT).show();
                 itemClicked = 1;
             } else if (view == sixMonthsBtn) {
-          //      Toast.makeText(MainActivity.this, "Six Months", Toast.LENGTH_SHORT).show();
+                //      Toast.makeText(MainActivity.this, "Six Months", Toast.LENGTH_SHORT).show();
                 itemClicked = 2;
             } else {
-          //      Toast.makeText(MainActivity.this, "One Year", Toast.LENGTH_SHORT).show();
+                //      Toast.makeText(MainActivity.this, "One Year", Toast.LENGTH_SHORT).show();
                 itemClicked = 3;
             }
             buy();
@@ -102,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
     private final View.OnClickListener imageViewCL = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            consume();
         }
     };
 
@@ -121,15 +123,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void buy() {
         if (mHelper != null && mHelper.subscriptionsSupported()) {
-            mHelper.launchSubscriptionPurchaseFlow(MainActivity.this, subscriptionsKeys.get(itemClicked), RC_REQUEST, new SubscriptionPurchaseListener(subscriptionsKeys, mHelper,itemClicked), "token" + 3232);
-            pearImgView.setVisibility(View.VISIBLE);
+            mHelper.launchSubscriptionPurchaseFlow(MainActivity.this, subscriptionsKeys.get(itemClicked), RC_REQUEST, new SubscriptionPurchaseListener(subscriptionsKeys, mHelper, itemClicked), generateTocken());
         }
     }
 
-    private void consume() {
-        if (mHelper != null && mHelper.subscriptionsSupported()) {
-            mHelper.queryInventoryAsync(new SubscriptionOnQueryInventoryFinished(subscriptionsKeys));
-            pearImgView.setVisibility(View.GONE);
-        }
+    private String generateTocken() {
+        String token = "token-";
+        Random random = new Random();
+        return token + random.nextInt(99999);
     }
 }
