@@ -41,7 +41,6 @@ public class QueryInventoryFinishedListener implements IabHelper.QueryInventoryF
                     Log.d(Constants.APP_TAG, "-------------------------------------------------------");
 
                     if (inventory.hasPurchase(subscriptionKey)) {
-                        MainActivity.subscriptionIndex = i;
                         return;
                     }
                 }
