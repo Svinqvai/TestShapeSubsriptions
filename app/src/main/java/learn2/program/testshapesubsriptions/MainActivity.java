@@ -92,13 +92,13 @@ public class MainActivity extends AppCompatActivity {
             //Display all buttons
         } else {
             if (mInfiniteGasSku.equalsIgnoreCase(ONE_MONTH)) {
-                oneMonthBtn.setText("Renew One Month Subscription");
+                oneMonthBtn.setVisibility(View.GONE);
             } else if (mInfiniteGasSku.equalsIgnoreCase(THREE_MONTHS)) {
-                threeMonthsBtn.setText("Renew Three Months Subscription");
+                threeMonthsBtn.setVisibility(View.GONE);
             } else if (mInfiniteGasSku.equalsIgnoreCase(SIX_MONTHS)) {
-                sixMonthsBtn.setText("Renew Six Months Subscription");
+                sixMonthsBtn.setVisibility(View.GONE);
             } else if (mInfiniteGasSku.equalsIgnoreCase(ONE_YEAR)) {
-                oneYearBtn.setText("Renew One Year Subscription");
+                oneYearBtn.setVisibility(View.GONE);
             }
         }
     }
@@ -227,8 +227,6 @@ public class MainActivity extends AppCompatActivity {
                 mAutoRenewEnabled = purchase.isAutoRenewing();
                 mSelectedSubscriptionPeriod = purchase.getSku();
             }
-
-
         }
     };
 
@@ -287,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
 // Payload is additional argument  =that you want google play  to pass back along with purchase information
 // product id = sku they are used to start purchase flow and other requests
 //getPurchases return all the active subscriptions
+// To test I need to copy the apk on my tablet and install it via File Manager
 
 //To upgrade or downgrade subscription I need to call getBuyIntentToReplaceSkus(). !!!!!!!!!!!!!!!!!!!!!!!!
 //his method is passed the new SKU the user wants to buy, and all the old SKUs that are superseded by it.
@@ -294,3 +293,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 //https://www.youtube.com/watch?v=mnA0gaQWtAM&list=PLOU2XLYxmsIJ6j7lT1xoqANWEJd-YbZqI&index=7
+
+
+//https://support.google.com/googleplay/android-developer/answer/3131213
