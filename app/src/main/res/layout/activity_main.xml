@@ -7,7 +7,7 @@
     tools:context="learn2.program.testshapesubsriptions.MainActivity">
 
 
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -20,61 +20,80 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Test Subscriptions"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="20dp"
-            android:layout_gravity="center_horizontal" />
+            android:text="Test Subscriptions"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
             android:id="@+id/oneMonthBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_grey"
             android:layout_marginBottom="20dp"
+            android:background="@drawable/rounded_corners_grey"
             android:text="One Month         $4.99 /per month" />
 
         <Button
             android:id="@+id/threeMonthsBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_grey"
             android:layout_marginBottom="20dp"
+            android:background="@drawable/rounded_corners_grey"
             android:text="Three Months      $2.99 /per month" />
 
         <Button
             android:id="@+id/sixMonthsBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_grey"
             android:layout_marginBottom="20dp"
+            android:background="@drawable/rounded_corners_grey"
             android:text="Six Months        $2.49 /per month" />
 
         <Button
             android:id="@+id/oneYearBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@drawable/rounded_corners_grey"
             android:layout_marginBottom="20dp"
+            android:background="@drawable/rounded_corners_grey"
             android:text="One Year        $1.99 /per month" />
 
+        <TableRow>
+
+            <Button
+                android:id="@+id/buyAppleBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="Buy Apple" />
+
+            <Button
+                android:id="@+id/eatAppleBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="Eat Apple" />
+        </TableRow>
+
         <ImageView
+            android:id="@+id/appleImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/imageView"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
             android:src="@drawable/icon"
-            android:layout_marginBottom="50dp"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal" />
+            android:visibility="gone" />
 
         <ImageView
+            android:id="@+id/pearImgView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/pearImgView"
+            android:layout_gravity="center_horizontal"
             android:src="@drawable/pear"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal" />
+            android:visibility="gone" />
 
-    </LinearLayout>
+    </TableLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>
