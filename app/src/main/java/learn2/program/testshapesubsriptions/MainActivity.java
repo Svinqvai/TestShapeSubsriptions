@@ -3,7 +3,6 @@ package learn2.program.testshapesubsriptions;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import learn2.program.testshapesubsriptions.billing_util.IabHelper;
 import learn2.program.testshapesubsriptions.billing_util.IabResult;
@@ -31,16 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Button sixMonthsBtn;
 
     private Button oneYearBtn;
-    //=========================================================
-    private Button buyAppleBtn;
 
-    private Button eatAppleBtn;
-
-    private ImageView appleImageView;
-
-    private int apple;
-
-    //=========================================================
     String mInfiniteGasSku = "";
 
     private String mSelectedSubscriptionPeriod;
@@ -55,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private String THREE_MONTHS = "learn2.program.testsubscriptionthreemonth";
     private String SIX_MONTHS = "learn2.program.testsubscriptionsixmonth";
     private String ONE_YEAR = "learn2.program.testsubscriptiononeyear";
-    private String APPLE_SKU = "learn2.program.buyapple";
 
     private static final int RC_REQUEST = 17323;
     private IabHelper mHelper;
@@ -73,16 +61,6 @@ public class MainActivity extends AppCompatActivity {
         sixMonthsBtn = (Button) findViewById(R.id.sixMonthsBtn);
         oneYearBtn = (Button) findViewById(R.id.oneYearBtn);
         pearImgView = (ImageView) findViewById(R.id.pearImgView);
-
-        //=============================================================
-        buyAppleBtn = (Button) findViewById(R.id.buyAppleBtn);
-        eatAppleBtn = (Button) findViewById(R.id.eatAppleBtn);
-        appleImageView = (ImageView) findViewById(R.id.appleImageView);
-
-        buyAppleBtn.setOnClickListener(buyAppleCL);
-        eatAppleBtn.setOnClickListener(consumeAppleCL);
-        loadData();
-        //=============================================================
 
         oneMonthBtn.setOnClickListener(subscriptionCL);
         threeMonthsBtn.setOnClickListener(subscriptionCL);
@@ -103,15 +81,10 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                List<String> additionalSkuList = new ArrayList<>();
-                additionalSkuList.add(ONE_MONTH);
-                additionalSkuList.add(THREE_MONTHS);
-                additionalSkuList.add(SIX_MONTHS);
-                additionalSkuList.add(ONE_YEAR);
+                final List<String> additionalSkuList = Arrays.asList(ONE_MONTH, THREE_MONTHS, SIX_MONTHS, ONE_YEAR);
 
                 try {
-                    mHelper.queryInventoryAsync(true, null,additionalSkuList,
-                            mGotInventoryListener);
+                    mHelper.queryInventoryAsync(true, null, additionalSkuList, mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     complain("Error querying inventory. Another async operation in progress.");
                 }
@@ -189,19 +162,6 @@ public class MainActivity extends AppCompatActivity {
             String oneYearPrice = inventory.getSkuDetails(ONE_YEAR).getPrice();
             oneYearBtn.setText("One Year         " + oneYearPrice + " /per month");
 
-            //=================================================
-
-            Purchase gasPurchase = inventory.getPurchase(APPLE_SKU);
-            if (gasPurchase != null && verifyDeveloperPayload(gasPurchase)) {
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(APPLE_SKU), mConsumeFinishedListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
-                }
-                return;
-            }
-
-            updateUI();
         }
     };
 
@@ -265,17 +225,9 @@ public class MainActivity extends AppCompatActivity {
             Log.d(Constants.APP_TAG, "Purchase successful.");
 
 
-            if (purchase.getSku().equals(ONE_MONTH)
-                    || purchase.getSku().equals(THREE_MONTHS)
-                    || purchase.getSku().equals(SIX_MONTHS)
-                    || purchase.getSku().equals(ONE_YEAR)) {
+            if (purchase.getSku().equals(ONE_MONTH) || purchase.getSku().equals(THREE_MONTHS)
+                    || purchase.getSku().equals(SIX_MONTHS) || purchase.getSku().equals(ONE_YEAR)) {
 
-                Log.d(Constants.APP_TAG, "Subscription purchased.");
-                Log.d(Constants.APP_TAG, " PurchaseFinishedListener Scu: " + purchase.getSku());
-                Log.d(Constants.APP_TAG, "PurchaseFinishedListener Order ID : " + purchase.getOrderId());
-                Log.d(Constants.APP_TAG, "PurchaseFinishedListener DeveloperPayload: " + purchase.getDeveloperPayload());
-                Log.d(Constants.APP_TAG, "PurchaseFinishedListener Type: " + purchase.getItemType());
-                Log.d(Constants.APP_TAG, "PurchaseFinishedListener Purchase State: " + purchase.getPurchaseState());
                 alert("Thank you for subscription");
                 mSubscribedToInfiniteGas = true;
                 mAutoRenewEnabled = purchase.isAutoRenewing();
@@ -286,8 +238,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     boolean verifyDeveloperPayload(Purchase purchase) {
-        String payload = purchase.getDeveloperPayload();
-
         return true;
     }
 
@@ -315,12 +265,6 @@ public class MainActivity extends AppCompatActivity {
         bld.create().show();
     }
 
-    private String generatePayload() {
-        String token = "token-";
-        Random random = new Random();
-        return token + random.nextInt(99999);
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -330,94 +274,4 @@ public class MainActivity extends AppCompatActivity {
             mHelper = null;
         }
     }
-
-    //============================================================
-
-
-    void saveData() {
-        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-        editor.putInt("apple", apple);
-        editor.apply();
-    }
-
-    void loadData() {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
-        apple = sp.getInt("apple", 0);
-    }
-
-
-    private final View.OnClickListener buyAppleCL = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            try {
-                mHelper.launchPurchaseFlow(MainActivity.this, APPLE_SKU, RC_REQUEST, mPurchaseFinishedListener, "");
-            } catch (IabHelper.IabAsyncInProgressException e) {
-                complain("Error launching purchase flow. Another async operation in progress.");
-            }
-        }
-    };
-
-
-    private final View.OnClickListener consumeAppleCL = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (apple > 0) {
-                apple--;
-                saveData();
-            }
-            alert("Apple eaten");
-        }
-    };
-
-
-    // Called when consumption is complete
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-
-            // We know this is the "gas" sku because it's the only one we consume,
-            // so we don't check which sku was consumed. If you have more than one
-            // sku, you probably should check...
-            if (result.isSuccess()) {
-                // successfully consumed, so we apply the effects of the item in our
-                // game world's logic, which in our case means filling the gas tank a bit
-                if (apple < 1) {
-                    apple++;
-                }
-                saveData();
-                updateUI();
-            } else {
-                complain("Error while consuming: " + result);
-            }
-
-        }
-    };
-
-
-    private void updateUI() {
-        appleImageView.setVisibility(apple <= 0 ? View.GONE : View.VISIBLE);
-    }
-
-
 }
-
-
-//TODO  Generate payload
-//TODO Construct the key from some strings at runtime
-//TODO amend the library
-// Payload is additional argument  =that you want google play  to pass back along with purchase information
-// product id = sku they are used to start purchase flow and other requests
-//getPurchases return all the active subscriptions
-// To test I need to copy the apk on my tablet and install it via File Manager
-
-//To upgrade or downgrade subscription I need to call getBuyIntentToReplaceSkus(). !!!!!!!!!!!!!!!!!!!!!!!!
-//his method is passed the new SKU the user wants to buy, and all the old SKUs that are superseded by it.
-//https://developer.android.com/google/play/billing/billing_subscriptions.html
-
-
-//https://www.youtube.com/watch?v=mnA0gaQWtAM&list=PLOU2XLYxmsIJ6j7lT1xoqANWEJd-YbZqI&index=7
-
-
-//https://support.google.com/googleplay/android-developer/answer/3131213
