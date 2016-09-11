@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button sixMonthsBtn;
 
     private Button oneYearBtn;
-//=========================================================
+    //=========================================================
     private Button buyAppleBtn;
 
     private Button eatAppleBtn;
@@ -102,8 +102,16 @@ public class MainActivity extends AppCompatActivity {
                 if (mHelper == null) {
                     return;
                 }
+
+                List<String> additionalSkuList = new ArrayList<>();
+                additionalSkuList.add(ONE_MONTH);
+                additionalSkuList.add(THREE_MONTHS);
+                additionalSkuList.add(SIX_MONTHS);
+                additionalSkuList.add(ONE_YEAR);
+
                 try {
-                    mHelper.queryInventoryAsync(mGotInventoryListener);
+                    mHelper.queryInventoryAsync(true, null,additionalSkuList,
+                            mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     complain("Error querying inventory. Another async operation in progress.");
                 }
@@ -167,10 +175,19 @@ public class MainActivity extends AppCompatActivity {
                     || (sixMonthsPurchase != null && verifyDeveloperPayload(sixMonthsPurchase))
                     || (oneYearPurchase != null && verifyDeveloperPayload(oneYearPurchase)));
 
-            if (mSubscribedToInfiniteGas){
+            if (mSubscribedToInfiniteGas) {
                 pearImgView.setVisibility(View.VISIBLE);
             }
 
+
+            String oneMonthPrice = inventory.getSkuDetails(ONE_MONTH).getPrice();
+            oneMonthBtn.setText("One Month         " + oneMonthPrice + " /per month");
+            String threeMonthsPrice = inventory.getSkuDetails(THREE_MONTHS).getPrice();
+            threeMonthsBtn.setText("Three Month         " + threeMonthsPrice + " /per month");
+            String sixMonthsPrice = inventory.getSkuDetails(SIX_MONTHS).getPrice();
+            sixMonthsBtn.setText("Six Month         " + sixMonthsPrice + " /per month");
+            String oneYearPrice = inventory.getSkuDetails(ONE_YEAR).getPrice();
+            oneYearBtn.setText("One Year         " + oneYearPrice + " /per month");
 
             //=================================================
 
@@ -217,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 oldSkus.add(mInfiniteGasSku);
             }
 
-
+            //buy subscription
             try {
                 mHelper.launchPurchaseFlow(MainActivity.this, mSelectedSubscriptionPeriod, IabHelper.ITEM_TYPE_SUBS,
                         oldSkus, RC_REQUEST, mPurchaseFinishedListener, payload);
@@ -344,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
     private final View.OnClickListener consumeAppleCL = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(apple >0){
+            if (apple > 0) {
                 apple--;
                 saveData();
             }
@@ -366,13 +383,12 @@ public class MainActivity extends AppCompatActivity {
             if (result.isSuccess()) {
                 // successfully consumed, so we apply the effects of the item in our
                 // game world's logic, which in our case means filling the gas tank a bit
-                if(apple < 1){
-                    apple ++;
+                if (apple < 1) {
+                    apple++;
                 }
                 saveData();
                 updateUI();
-            }
-            else {
+            } else {
                 complain("Error while consuming: " + result);
             }
 
@@ -380,23 +396,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-
-    private  void updateUI(){
-        appleImageView.setVisibility(apple <=0 ? View.GONE : View.VISIBLE);
+    private void updateUI() {
+        appleImageView.setVisibility(apple <= 0 ? View.GONE : View.VISIBLE);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
