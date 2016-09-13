@@ -28,9 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button sixMonthsBtn;
 
-    private Button oneYearBtn;
-
-    String mInfiniteGasSku = "";
+    private String mInfiniteGasSku = "";
 
     private String mSelectedSubscriptionPeriod;
 
@@ -38,7 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView pearImgView;
 
-    private boolean mAutoRenewEnabled;
+    private List<String> subscriptionsList;
+
+    private List<Button> buttons;
+
+    boolean mAutoRenewEnabled = false;
 
     private String ONE_MONTH = "learn2.program.testsubscriptiononemonth";
     private String THREE_MONTHS = "learn2.program.testsubscriptionthreemonth";
@@ -47,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_REQUEST = 17323;
     private IabHelper mHelper;
-    String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvgtPCE24JN71QUFgdFde8Zu7mop3ozX4SWP3xd8s8xf1Dqov/0MUg957NcfAhMWkggFMn0DTByPV9lS68/tfrIPgkX96VQz9jluvH++kGfpkfQV3WfGbV7dGHNwD9gqMuZRy7V3efZZXrc1ewdut6MZE97i5lpo5lp3HVyfjnCl3yLmI/Di6l+UdKU+ZERkWOT1ONeww+lP71gz0UweGegyfbXDmYso33HW7bJcpjLmv9x3yhrbEqNXgalNFA1TQtS4sdh1O20m36xoKp4q1E35QPnM7Hg5/8qDPOF5k31OQHogigjRTSWTmiYVN5ynXM70viFBX65g0SNYtHh/emwIDAQAB";
+    //String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvgtPCE24JN71QUFgdFde8Zu7mop3ozX4SWP3xd8s8xf1Dqov/0MUg957NcfAhMWkggFMn0DTByPV9lS68/tfrIPgkX96VQz9jluvH++kGfpkfQV3WfGbV7dGHNwD9gqMuZRy7V3efZZXrc1ewdut6MZE97i5lpo5lp3HVyfjnCl3yLmI/Di6l+UdKU+ZERkWOT1ONeww+lP71gz0UweGegyfbXDmYso33HW7bJcpjLmv9x3yhrbEqNXgalNFA1TQtS4sdh1O20m36xoKp4q1E35QPnM7Hg5/8qDPOF5k31OQHogigjRTSWTmiYVN5ynXM70viFBX65g0SNYtHh/emwIDAQAB";
+    String base44EncodedPublicKey ="BAQADIwme/hHtYNS0g56XBFiv07MXny5NVYimTWSTRjgigoHQO13k5FOPDq8/5gH7MnPQ53E1q4pKox63m02O1hds4StQT1AFNlagXNqEbrhy3x9vmLjpcJb7WH33osYmDXbfygeGewU0zg17Pl+wweNO1TOWkREZ+UKdU+l6iD/ImLy3lCnjfyVH3pl5opl5i79EZM6tudwe1crXZZfe3V7yRZuMqg9DwNHGd7VbGfW3VQfkpfGk++Hvulj9zQV69XkgPIrft/86Sl9VPyBTD0nMFggkWMhAfcN759gUM0/voqD1fx8s8dx3PWS4Xzo3pom7uZ8edFdgFUQ17NJ42ECPtgvAEQACKgCBIIMA8QACOAAFEQAB0w9GikhqkgBNAj";
 
 
     @SuppressLint("SetTextI18n")
@@ -55,19 +58,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         oneMonthBtn = (Button) findViewById(R.id.oneMonthBtn);
         threeMonthsBtn = (Button) findViewById(R.id.threeMonthsBtn);
         sixMonthsBtn = (Button) findViewById(R.id.sixMonthsBtn);
-        oneYearBtn = (Button) findViewById(R.id.oneYearBtn);
+        final Button oneYearBtn = (Button) findViewById(R.id.oneYearBtn);
         pearImgView = (ImageView) findViewById(R.id.pearImgView);
 
-        oneMonthBtn.setOnClickListener(subscriptionCL);
-        threeMonthsBtn.setOnClickListener(subscriptionCL);
-        sixMonthsBtn.setOnClickListener(subscriptionCL);
-        oneYearBtn.setOnClickListener(subscriptionCL);
+        subscriptionsList = Arrays.asList(ONE_MONTH, THREE_MONTHS, SIX_MONTHS, ONE_YEAR);
+        buttons = Arrays.asList(oneMonthBtn, threeMonthsBtn, sixMonthsBtn, oneYearBtn);
 
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        mHelper = new IabHelper(this, getBit() +revertKey(base44EncodedPublicKey));
 
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
@@ -81,19 +81,15 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                final List<String> additionalSkuList = Arrays.asList(ONE_MONTH, THREE_MONTHS, SIX_MONTHS, ONE_YEAR);
-
                 try {
-                    mHelper.queryInventoryAsync(true, null, additionalSkuList, mGotInventoryListener);
+                    mHelper.queryInventoryAsync(true, null, subscriptionsList, mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     complain("Error querying inventory. Another async operation in progress.");
                 }
             }
         });
 
-        if (!mSubscribedToInfiniteGas || !mAutoRenewEnabled) {
-            //Display all buttons
-        } else {
+        if (mSubscribedToInfiniteGas) {
             if (mInfiniteGasSku.equalsIgnoreCase(ONE_MONTH)) {
                 oneMonthBtn.setVisibility(View.GONE);
             } else if (mInfiniteGasSku.equalsIgnoreCase(THREE_MONTHS)) {
@@ -120,48 +116,32 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.d(Constants.APP_TAG, "Query inventory was successful.");
 
-            // First find out which subscription is auto renewing
-            Purchase oneMonthPurchase = inventory.getPurchase(ONE_MONTH);
-            Purchase threeMonthsPurchase = inventory.getPurchase(THREE_MONTHS);
-            Purchase sixMonthsPurchase = inventory.getPurchase(SIX_MONTHS);
-            Purchase oneYearPurchase = inventory.getPurchase(ONE_YEAR);
-
-            if (oneMonthPurchase != null && oneMonthPurchase.isAutoRenewing()) {
-                mInfiniteGasSku = ONE_MONTH;
-                mAutoRenewEnabled = true;
-            } else if (threeMonthsPurchase != null && threeMonthsPurchase.isAutoRenewing()) {
-                mInfiniteGasSku = THREE_MONTHS;
-                mAutoRenewEnabled = true;
-            } else if (sixMonthsPurchase != null && sixMonthsPurchase.isAutoRenewing()) {
-                mInfiniteGasSku = SIX_MONTHS;
-                mAutoRenewEnabled = true;
-            } else if (oneYearPurchase != null && oneYearPurchase.isAutoRenewing()) {
-                mInfiniteGasSku = ONE_YEAR;
-                mAutoRenewEnabled = true;
-            } else {
-                mInfiniteGasSku = "";
-                mAutoRenewEnabled = false;
+            for (String id : subscriptionsList) {
+                Purchase purchase = inventory.getPurchase(id);
+                if (purchase != null && purchase.isAutoRenewing()) {
+                    mInfiniteGasSku = id;
+                    mAutoRenewEnabled = true;
+                    mSubscribedToInfiniteGas = verifyDeveloperPayload(purchase);
+                    break;
+                } else {
+                    mInfiniteGasSku = "";
+                    mAutoRenewEnabled = false;
+                }
             }
-
-            mSubscribedToInfiniteGas = (oneMonthPurchase != null && verifyDeveloperPayload(oneMonthPurchase))
-                    || (threeMonthsPurchase != null && verifyDeveloperPayload(threeMonthsPurchase)
-                    || (sixMonthsPurchase != null && verifyDeveloperPayload(sixMonthsPurchase))
-                    || (oneYearPurchase != null && verifyDeveloperPayload(oneYearPurchase)));
 
             if (mSubscribedToInfiniteGas) {
                 pearImgView.setVisibility(View.VISIBLE);
             }
 
 
-            String oneMonthPrice = inventory.getSkuDetails(ONE_MONTH).getPrice();
-            oneMonthBtn.setText("One Month         " + oneMonthPrice + " /per month");
-            String threeMonthsPrice = inventory.getSkuDetails(THREE_MONTHS).getPrice();
-            threeMonthsBtn.setText("Three Month         " + threeMonthsPrice + " /per month");
-            String sixMonthsPrice = inventory.getSkuDetails(SIX_MONTHS).getPrice();
-            sixMonthsBtn.setText("Six Month         " + sixMonthsPrice + " /per month");
-            String oneYearPrice = inventory.getSkuDetails(ONE_YEAR).getPrice();
-            oneYearBtn.setText("One Year         " + oneYearPrice + " /per month");
+            for (int i = 0; i < subscriptionsList.size(); i++) {
 
+                if (inventory.getSkuDetails(subscriptionsList.get(i)) != null) {
+                    String price = inventory.getSkuDetails(subscriptionsList.get(i)).getPrice() + " /per month";
+                    buttons.get(i).setText(price);
+                    buttons.get(i).setOnClickListener(subscriptionCL);
+                }
+            }
         }
     };
 
@@ -183,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 mSelectedSubscriptionPeriod = ONE_YEAR;
             }
-            //TODO generate it
             String payload = "";
             List<String> oldSkus = null;
             if (!TextUtils.isEmpty(mInfiniteGasSku)
@@ -232,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
                 mSubscribedToInfiniteGas = true;
                 mAutoRenewEnabled = purchase.isAutoRenewing();
                 mSelectedSubscriptionPeriod = purchase.getSku();
+                pearImgView.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -274,4 +254,13 @@ public class MainActivity extends AppCompatActivity {
             mHelper = null;
         }
     }
+    private String revertKey(String key){
+        StringBuilder builder = new StringBuilder(key).reverse();
+        Log.d(Constants.APP_TAG,builder.toString());
+        return builder.toString();
+    }
+
+   private String getBit(){
+       return "MIIBI";
+   }
 }

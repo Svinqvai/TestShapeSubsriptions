@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/rounded_corners"
     android:fitsSystemWindows="true"
-    tools:context="learn2.program.testshapesubsriptions.MainActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
 
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corners"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -57,43 +60,34 @@
             android:background="@drawable/rounded_corners_grey"
             android:text="One Year        $1.99 /per month" />
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
 
-            <Button
-                android:id="@+id/buyAppleBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:text="Buy Apple" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
 
-            <Button
-                android:id="@+id/eatAppleBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:text="Eat Apple" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/pearImgView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_column="11"
+                android:src="@drawable/pear" />
         </TableRow>
 
-        <ImageView
-            android:id="@+id/appleImageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/icon"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/pearImgView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/pear"
-            android:visibility="gone" />
-
     </TableLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>
