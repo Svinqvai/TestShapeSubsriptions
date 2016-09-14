@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">TestShapeSubsriptions</string>
     <string name="action_settings">Settings</string>
+
+    <string name="buy">Buy</string>
+    <string name="month">/month</string>
+    <string name="give_it_a_try">Give it a try</string>
+    <string name="save_percents">Save %1$d%%</string>
+    <string name="one_year">1 Year</string>
+    <string name="one_month">1 Month</string>
+    <string name="three_months">3 Months</string>
+    <string name="six_months">6 Months</string>
 </resources>

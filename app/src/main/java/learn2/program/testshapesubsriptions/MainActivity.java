@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +22,7 @@ import learn2.program.testshapesubsriptions.billing_util.IabHelper;
 import learn2.program.testshapesubsriptions.billing_util.IabResult;
 import learn2.program.testshapesubsriptions.billing_util.Inventory;
 import learn2.program.testshapesubsriptions.billing_util.Purchase;
+import learn2.program.testshapesubsriptions.subscriptions.Subscriptions;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,17 +51,22 @@ public class MainActivity extends AppCompatActivity {
     private String SIX_MONTHS = "learn2.program.testsubscriptionsixmonth";
     private String ONE_YEAR = "learn2.program.testsubscriptiononeyear";
 
+    private static String PAYLOAD = "Shape";
+
     private static final int RC_REQUEST = 17323;
     private IabHelper mHelper;
     //String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvgtPCE24JN71QUFgdFde8Zu7mop3ozX4SWP3xd8s8xf1Dqov/0MUg957NcfAhMWkggFMn0DTByPV9lS68/tfrIPgkX96VQz9jluvH++kGfpkfQV3WfGbV7dGHNwD9gqMuZRy7V3efZZXrc1ewdut6MZE97i5lpo5lp3HVyfjnCl3yLmI/Di6l+UdKU+ZERkWOT1ONeww+lP71gz0UweGegyfbXDmYso33HW7bJcpjLmv9x3yhrbEqNXgalNFA1TQtS4sdh1O20m36xoKp4q1E35QPnM7Hg5/8qDPOF5k31OQHogigjRTSWTmiYVN5ynXM70viFBX65g0SNYtHh/emwIDAQAB";
-    String base44EncodedPublicKey ="BAQADIwme/hHtYNS0g56XBFiv07MXny5NVYimTWSTRjgigoHQO13k5FOPDq8/5gH7MnPQ53E1q4pKox63m02O1hds4StQT1AFNlagXNqEbrhy3x9vmLjpcJb7WH33osYmDXbfygeGewU0zg17Pl+wweNO1TOWkREZ+UKdU+l6iD/ImLy3lCnjfyVH3pl5opl5i79EZM6tudwe1crXZZfe3V7yRZuMqg9DwNHGd7VbGfW3VQfkpfGk++Hvulj9zQV69XkgPIrft/86Sl9VPyBTD0nMFggkWMhAfcN759gUM0/voqD1fx8s8dx3PWS4Xzo3pom7uZ8edFdgFUQ17NJ42ECPtgvAEQACKgCBIIMA8QACOAAFEQAB0w9GikhqkgBNAj";
+    String base44EncodedPublicKey = "BAQADIwme/hHtYNS0g56XBFiv07MXny5NVYimTWSTRjgigoHQO13k5FOPDq8/5gH7MnPQ53E1q4pKox63m02O1hds4StQT1AFNlagXNqEbrhy3x9vmLjpcJb7WH33osYmDXbfygeGewU0zg17Pl+wweNO1TOWkREZ+UKdU+l6iD/ImLy3lCnjfyVH3pl5opl5i79EZM6tudwe1crXZZfe3V7yRZuMqg9DwNHGd7VbGfW3VQfkpfGk++Hvulj9zQV69XkgPIrft/86Sl9VPyBTD0nMFggkWMhAfcN759gUM0/voqD1fx8s8dx3PWS4Xzo3pom7uZ8edFdgFUQ17NJ42ECPtgvAEQACKgCBIIMA8QACOAAFEQAB0w9GikhqkgBNAj";
 
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity_2);
+
+        goToNextFragment("O_o", new Subscriptions(), this);
+
         oneMonthBtn = (Button) findViewById(R.id.oneMonthBtn);
         threeMonthsBtn = (Button) findViewById(R.id.threeMonthsBtn);
         sixMonthsBtn = (Button) findViewById(R.id.sixMonthsBtn);
@@ -67,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         subscriptionsList = Arrays.asList(ONE_MONTH, THREE_MONTHS, SIX_MONTHS, ONE_YEAR);
         buttons = Arrays.asList(oneMonthBtn, threeMonthsBtn, sixMonthsBtn, oneYearBtn);
 
-        mHelper = new IabHelper(this, getBit() +revertKey(base44EncodedPublicKey));
+        mHelper = new IabHelper(this, getBit() + revertKey(base44EncodedPublicKey));
 
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
@@ -137,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < subscriptionsList.size(); i++) {
 
                 if (inventory.getSkuDetails(subscriptionsList.get(i)) != null) {
-                    String price = inventory.getSkuDetails(subscriptionsList.get(i)).getPrice() + " /per month";
+                    String price = inventory.getSkuDetails(subscriptionsList.get(i)).getPrice() + " /month";
                     buttons.get(i).setText(price);
                     buttons.get(i).setOnClickListener(subscriptionCL);
                 }
@@ -163,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 mSelectedSubscriptionPeriod = ONE_YEAR;
             }
-            String payload = "";
             List<String> oldSkus = null;
             if (!TextUtils.isEmpty(mInfiniteGasSku)
                     && !mInfiniteGasSku.equals(mSelectedSubscriptionPeriod)) {
@@ -176,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             //buy subscription
             try {
                 mHelper.launchPurchaseFlow(MainActivity.this, mSelectedSubscriptionPeriod, IabHelper.ITEM_TYPE_SUBS,
-                        oldSkus, RC_REQUEST, mPurchaseFinishedListener, payload);
+                        oldSkus, RC_REQUEST, mPurchaseFinishedListener, PAYLOAD);
             } catch (IabHelper.IabAsyncInProgressException e) {
                 complain("Error launching purchase flow. Another async operation in progress.");
             }
@@ -218,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     boolean verifyDeveloperPayload(Purchase purchase) {
-        return true;
+        return purchase != null && PAYLOAD.equalsIgnoreCase(purchase.getDeveloperPayload());
     }
 
     @Override
@@ -254,13 +262,21 @@ public class MainActivity extends AppCompatActivity {
             mHelper = null;
         }
     }
-    private String revertKey(String key){
+
+    private String revertKey(String key) {
         StringBuilder builder = new StringBuilder(key).reverse();
-        Log.d(Constants.APP_TAG,builder.toString());
+        Log.d(Constants.APP_TAG, builder.toString());
         return builder.toString();
     }
 
-   private String getBit(){
-       return "MIIBI";
-   }
+    private String getBit() {
+        return "MIIBI";
+    }
+
+    public static void goToNextFragment(final String title, final Fragment frag, FragmentActivity activity) {
+        activity.setTitle(title);
+        final FragmentTransaction fragTransaction = activity.getSupportFragmentManager().beginTransaction();
+        fragTransaction.addToBackStack(null);
+        fragTransaction.replace(R.id.frame_container, frag).commit();
+    }
 }

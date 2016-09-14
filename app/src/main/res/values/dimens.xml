@@ -3,4 +3,36 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="app_padding_3">15dp</dimen>
+
+    <dimen name="app_margin">20dp</dimen>
+    <dimen name="app_margin_2">10dp</dimen>
+    <dimen name="app_margin_3">5dp</dimen>
+
+    <dimen name="lv_margin_right">5dp</dimen>
+    <dimen name="lv_margin_left">5dp</dimen>
+    <dimen name="lv_padding">5dp</dimen>
+    <dimen name="lv_margin">5dp</dimen>
+
+
+    <dimen name="food_list_view_margin">4dp</dimen>
+    <dimen name="weight_stats_list_item_size">16sp</dimen>
+    <dimen name="lv_img_size">36dp</dimen>
+
+    <dimen name="tv_margin">5dp</dimen>
+    <dimen name="tv_margin_right">6dp</dimen>
+
+    <dimen name="small_txt_font_size">14sp</dimen>
+    <dimen name="large_txt_font_size">18sp</dimen>
+
+    <dimen name="reminderTBpadding">5dp</dimen>
+    <dimen name="reminderTBtextSize">14sp</dimen>
+    <dimen name="reminderTBMargin">5dp</dimen>
+
+    <!--  ===============================  -->
+
+    <dimen name="separator_text_size">20sp</dimen>
+    <dimen name="settings_icon_size">30dp</dimen>
 </resources>

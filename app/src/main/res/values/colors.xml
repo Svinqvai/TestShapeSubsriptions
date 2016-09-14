@@ -3,4 +3,41 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="android_list_view_select">#009688</color>
+    <color name="list_background_pressed">#FFA500</color>
+    <color name="gray_text_color">#757575</color>
+    <color name="dark_green_seek_bar">#009385</color>
+    <color name="grey_horizontal_line">#E0E0E0</color>
+    <color name="bmi_table_header">#4BAFB9</color>
+    <color name="yellow">#FFFB00</color>
+    <color name="light_gray_2">#F9F9F9</color>
+    <color name="gray_default">#D8D8D8</color>
+    <color name="gray_dark">#C8C8C8</color>
+    <color name="gray_darker">#686868</color>
+
+    <color name="green_dark">#02BB02</color>
+    <color name="green_light">#A2CC45</color>
+
+
+    <!-- Flask Colors -->
+    <color name="flask_blue">#70B3D0</color>
+    <color name="flask_red">#F56639</color>
+    <color name="flask_yellow">#FDC523</color>
+    <color name="flask_green">#8FC742</color>
+    <color name="light_gray">#D0D0D0</color>
+
+    <!-- Buttons -->
+    <color name="text_color">#5A5A5A</color>
+
+    <!--  ===============================  -->
+    <color name="window_background">#F7F7F7</color>
+    <color name="app_text_color">#000</color>
+    <color name="action_bar_color">#689F38</color>
+    <color name="separator_color">#689F38</color>
+
+
+    <color name="tool_bar_background">#A2CC45</color>
+    <color name="tool_bar_text_color">#FFF</color>
+    <color name="android_dark_green">#009688</color>
 </resources>
