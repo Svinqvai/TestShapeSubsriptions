@@ -26,12 +26,6 @@ import learn2.program.testshapesubsriptions.subscriptions.Subscriptions;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button oneMonthBtn;
-
-    private Button threeMonthsBtn;
-
-    private Button sixMonthsBtn;
-
     private String mInfiniteGasSku = "";
 
     private String mSelectedSubscriptionPeriod;
@@ -42,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> subscriptionsList;
 
-    private List<Button> buttons;
-
     boolean mAutoRenewEnabled = false;
 
     private String ONE_MONTH = "learn2.program.testsubscriptiononemonth";
     private String THREE_MONTHS = "learn2.program.testsubscriptionthreemonth";
     private String SIX_MONTHS = "learn2.program.testsubscriptionsixmonth";
     private String ONE_YEAR = "learn2.program.testsubscriptiononeyear";
+
+    public  static List<String> prices ;
 
     private static String PAYLOAD = "Shape";
 
@@ -65,16 +59,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_2);
 
-        goToNextFragment("O_o", new Subscriptions(), this);
+        prices = new ArrayList<>();
 
-        oneMonthBtn = (Button) findViewById(R.id.oneMonthBtn);
-        threeMonthsBtn = (Button) findViewById(R.id.threeMonthsBtn);
-        sixMonthsBtn = (Button) findViewById(R.id.sixMonthsBtn);
-        final Button oneYearBtn = (Button) findViewById(R.id.oneYearBtn);
+
         pearImgView = (ImageView) findViewById(R.id.pearImgView);
 
         subscriptionsList = Arrays.asList(ONE_MONTH, THREE_MONTHS, SIX_MONTHS, ONE_YEAR);
-        buttons = Arrays.asList(oneMonthBtn, threeMonthsBtn, sixMonthsBtn, oneYearBtn);
 
         mHelper = new IabHelper(this, getBit() + revertKey(base44EncodedPublicKey));
 
@@ -98,17 +88,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (mSubscribedToInfiniteGas) {
-            if (mInfiniteGasSku.equalsIgnoreCase(ONE_MONTH)) {
-                oneMonthBtn.setVisibility(View.GONE);
-            } else if (mInfiniteGasSku.equalsIgnoreCase(THREE_MONTHS)) {
-                threeMonthsBtn.setVisibility(View.GONE);
-            } else if (mInfiniteGasSku.equalsIgnoreCase(SIX_MONTHS)) {
-                sixMonthsBtn.setVisibility(View.GONE);
-            } else if (mInfiniteGasSku.equalsIgnoreCase(ONE_YEAR)) {
-                oneYearBtn.setVisibility(View.GONE);
-            }
-        }
+//        if (mSubscribedToInfiniteGas) {
+//            if (mInfiniteGasSku.equalsIgnoreCase(ONE_MONTH)) {
+//                oneMonthBtn.setVisibility(View.GONE);
+//            } else if (mInfiniteGasSku.equalsIgnoreCase(THREE_MONTHS)) {
+//                threeMonthsBtn.setVisibility(View.GONE);
+//            } else if (mInfiniteGasSku.equalsIgnoreCase(SIX_MONTHS)) {
+//                sixMonthsBtn.setVisibility(View.GONE);
+//            } else if (mInfiniteGasSku.equalsIgnoreCase(ONE_YEAR)) {
+//                oneYearBtn.setVisibility(View.GONE);
+//            }
+//        }
+
+
     }
 
 
@@ -147,11 +139,13 @@ public class MainActivity extends AppCompatActivity {
 
                 if (inventory.getSkuDetails(subscriptionsList.get(i)) != null) {
                     String price = inventory.getSkuDetails(subscriptionsList.get(i)).getPrice() + " /month";
-                    buttons.get(i).setText(price);
-                    buttons.get(i).setOnClickListener(subscriptionCL);
+//                    buttons.get(i).setText(price);
+//                    buttons.get(i).setOnClickListener(subscriptionCL);
+                    prices.add(price);
                 }
             }
         }
+
     };
 
 
@@ -162,16 +156,16 @@ public class MainActivity extends AppCompatActivity {
                 complain("Subscriptions not supported on your device yet. Sorry!");
                 return;
             }
-
-            if (view == oneMonthBtn) {
-                mSelectedSubscriptionPeriod = ONE_MONTH;
-            } else if (view == threeMonthsBtn) {
-                mSelectedSubscriptionPeriod = THREE_MONTHS;
-            } else if (view == sixMonthsBtn) {
-                mSelectedSubscriptionPeriod = SIX_MONTHS;
-            } else {
-                mSelectedSubscriptionPeriod = ONE_YEAR;
-            }
+//
+//            if (view == oneMonthBtn) {
+//                mSelectedSubscriptionPeriod = ONE_MONTH;
+//            } else if (view == threeMonthsBtn) {
+//                mSelectedSubscriptionPeriod = THREE_MONTHS;
+//            } else if (view == sixMonthsBtn) {
+//                mSelectedSubscriptionPeriod = SIX_MONTHS;
+//            } else {
+//                mSelectedSubscriptionPeriod = ONE_YEAR;
+//            }
             List<String> oldSkus = null;
             if (!TextUtils.isEmpty(mInfiniteGasSku)
                     && !mInfiniteGasSku.equals(mSelectedSubscriptionPeriod)) {

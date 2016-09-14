@@ -12,7 +12,7 @@
         android:id="@+id/textView2"
         android:layout_gravity="center_horizontal" />
 
-    <learn2.program.subsciptions.CustomViewPager
+    <learn2.program.testshapesubsriptions.subscriptions.CustomViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import learn2.program.testshapesubsriptions.Constants;
+import learn2.program.testshapesubsriptions.MainActivity;
 import learn2.program.testshapesubsriptions.R;
 import learn2.program.testshapesubsriptions.ZoomOutPageTransformer;
 
 
 public class Subscriptions extends Fragment {
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedState) {
 
@@ -26,7 +29,7 @@ public class Subscriptions extends Fragment {
         final SubscriptionsAdapter pageAdapter = new SubscriptionsAdapter(getActivity().getSupportFragmentManager(), fragments);
         pager.setAdapter(pageAdapter);
         pager.setCurrentItem(1);
-        pager.setPageTransformer(true, new ZoomOutPageTransformer(0.95f, 0.7f));
+        pager.setPageTransformer(true, new ZoomOutPageTransformer(0.90f, 0.7f));
 
 
         return view;
@@ -36,7 +39,7 @@ public class Subscriptions extends Fragment {
         final List<Fragment> fList = new ArrayList<>();
         final Resources res = getResources();
         fList.add(SubscriptionFragment.newInstance(res.getString(R.string.one_month), Color.rgb(251, 193, 85),
-                "$3.", "99", res.getString(R.string.give_it_a_try)));
+                "$3.", MainActivity.prices.get(0), res.getString(R.string.give_it_a_try)));
         fList.add(SubscriptionFragment.newInstance(res.getString(R.string.three_months), Color.rgb(200, 226, 106),
                 "$2.", "99", res.getString(R.string.save_percents, 25)));
         fList.add(SubscriptionFragment.newInstance(res.getString(R.string.six_months), Color.rgb(26, 206, 233),
