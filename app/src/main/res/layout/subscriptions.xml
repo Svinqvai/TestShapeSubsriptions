@@ -5,11 +5,12 @@
     android:orientation="vertical">
 
     <TextView
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="Trial Period Expires at 20/Sept/2016"
-        android:id="@+id/textView2"
+        android:id="@+id/trialPeriodTv"
         android:layout_gravity="center_horizontal" />
 
     <learn2.program.testshapesubsriptions.subscriptions.CustomViewPager

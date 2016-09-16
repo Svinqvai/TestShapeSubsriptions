@@ -1,4 +1,4 @@
-package learn2.program.testshapesubsriptions;
+package learn2.program.testshapesubsriptions.nav;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;

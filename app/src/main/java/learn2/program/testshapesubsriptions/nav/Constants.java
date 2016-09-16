@@ -1,4 +1,4 @@
-package learn2.program.testshapesubsriptions;
+package learn2.program.testshapesubsriptions.nav;
 
 
 public class Constants {
