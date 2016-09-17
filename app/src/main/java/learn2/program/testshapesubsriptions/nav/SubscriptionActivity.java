@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -15,8 +16,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import learn2.program.testshapesubsriptions.R;
+import learn2.program.testshapesubsriptions.billing_util.IabException;
 import learn2.program.testshapesubsriptions.billing_util.IabHelper;
 import learn2.program.testshapesubsriptions.billing_util.IabResult;
 import learn2.program.testshapesubsriptions.billing_util.Inventory;
@@ -44,8 +47,6 @@ public class SubscriptionActivity extends BaseActivity implements SubscriptionFr
 
     public ArrayList<String> prices;
 
-    private List<Fragment> fragments;
-
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,79 +70,10 @@ public class SubscriptionActivity extends BaseActivity implements SubscriptionFr
                 if (mHelper == null) {
                     return;
                 }
-
-                try {
-                    mHelper.queryInventoryAsync(true, null, subscriptionsList, mGotInventoryListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    alert("Error querying inventory. Another async operation in progress.");
-                }
+                new GetSubscriptionPrices().execute();
             }
         });
-
-        //There was no other way to make view pager to show all 4 pages.
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                pager.setClipToPadding(false);
-                fragments = getFragments();
-                final SubscriptionsAdapter pageAdapter = new SubscriptionsAdapter(getSupportFragmentManager(), fragments);
-                pager.setAdapter(pageAdapter);
-                pager.setCurrentItem(1);
-                pager.setPageTransformer(true, new ZoomOutPageTransformer(0.90f, 0.7f));
-            }
-        }).start();
     }
-
-
-    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-
-            if (mHelper == null) {
-                return;
-            }
-
-            if (result.isFailure()) {
-                alert("Failed to query inventory: " + result);
-                return;
-            }
-            Log.d(Constants.APP_TAG, "Query inventory was successful.");
-
-            for (String key : subscriptionsList) {
-                Purchase purchase = inventory.getPurchase(key);
-                if (purchase != null && purchase.isAutoRenewing()) {
-                    subscriptionKey = key;
-                    mAutoRenewEnabled = true;
-                    hasSubscription = verifyDeveloperPayload(purchase);
-                    purchaseDate = purchase.getPurchaseTime();
-                    break;
-                } else {
-                    subscriptionKey = "";
-                    mAutoRenewEnabled = false;
-                }
-            }
-            //TODO remove if below left for test purposes
-            if (hasSubscription) {
-                pearImgView.setVisibility(View.VISIBLE);
-            }
-
-            for (int i = 0; i < subscriptionsList.size(); i++) {
-                final SkuDetails details = inventory.getSkuDetails(subscriptionsList.get(i));
-                if (details != null) {
-                    prices.add(details.getPrice());
-                }
-            }
-
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(purchaseDate);
-            cal.add(Calendar.DAY_OF_YEAR, 14);
-            TextView trialPeriodTv = (TextView) findViewById(R.id.trialPeriodTv);
-            trialPeriodTv.setText(cal.getTime().toString());
-
-
-        }
-
-    };
-
 
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
@@ -187,15 +119,18 @@ public class SubscriptionActivity extends BaseActivity implements SubscriptionFr
     private List<Fragment> getFragments() {
         final List<Fragment> fragments = new ArrayList<>();
         final Resources res = getResources();
-        fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.one_month), Color.rgb(251, 193, 85),
-                prices.get(0), res.getString(R.string.give_it_a_try)));
-        fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.three_months), Color.rgb(200, 226, 106),
-                prices.get(1), res.getString(R.string.save_percents, 25)));
-        fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.six_months), Color.rgb(26, 206, 233),
-                prices.get(2), res.getString(R.string.save_percents, 37)));
-        fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.one_year), Color.rgb(85, 26, 139),
-                prices.get(3), res.getString(R.string.save_percents, 50)));
-        return fragments;
+        if (prices.size() > 3) {
+            fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.one_month), Color.rgb(251, 193, 85),
+                    prices.get(0), res.getString(R.string.give_it_a_try)));
+            fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.three_months), Color.rgb(200, 226, 106),
+                    prices.get(1), res.getString(R.string.save_percents, 25)));
+            fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.six_months), Color.rgb(26, 206, 233),
+                    prices.get(2), res.getString(R.string.save_percents, 37)));
+            fragments.add(SubscriptionFragment.newInstance(res.getString(R.string.one_year), Color.rgb(85, 26, 139),
+                    prices.get(3), res.getString(R.string.save_percents, 50)));
+            return fragments;
+        }
+        return null;
     }
 
     @Override
@@ -229,5 +164,69 @@ public class SubscriptionActivity extends BaseActivity implements SubscriptionFr
             alert("Error launching purchase flow. Another async operation in progress.");
         }
         mSelectedSubscriptionPeriod = "";
+    }
+
+    private class GetSubscriptionPrices extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(final Void... params) {
+            try {
+                Inventory inventory = mHelper.queryInventory(true, null, subscriptionsList);
+
+                for (String key : subscriptionsList) {
+                    Purchase purchase = inventory.getPurchase(key);
+                    if (purchase != null && purchase.isAutoRenewing()) {
+                        subscriptionKey = key;
+                        mAutoRenewEnabled = true;
+                        hasSubscription = verifyDeveloperPayload(purchase);
+                        purchaseDate = purchase.getPurchaseTime();
+                        break;
+                    } else {
+                        subscriptionKey = "";
+                        mAutoRenewEnabled = false;
+                    }
+                }
+
+                prices.clear();
+                for (int i = 0; i < subscriptionsList.size(); i++) {
+                    final SkuDetails details = inventory.getSkuDetails(subscriptionsList.get(i));
+                    if (details != null) {
+                        prices.add(details.getPrice());
+                    }
+                }
+
+            } catch (IabException e) {
+                alert("Error querying inventory. Another async operation in progress.");
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+
+            final List<Fragment> fragments = getFragments();
+            if (fragments == null) {
+                alert("NQMA WE !!! ");
+                return;
+            }
+
+            final Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(purchaseDate);
+            cal.add(Calendar.DAY_OF_YEAR, 14);
+            TextView trialPeriodTv = (TextView) findViewById(R.id.trialPeriodTv);
+            trialPeriodTv.setText("Trial date expires at : " + String.format(Locale.UK, "%td/%tm/%tY", cal, cal, cal));
+
+
+            if (hasSubscription) {
+                pearImgView.setVisibility(View.VISIBLE);
+            }
+
+            final SubscriptionsAdapter pageAdapter = new SubscriptionsAdapter(getSupportFragmentManager(), fragments);
+            pager.setOffscreenPageLimit(3);
+            pager.setAdapter(pageAdapter);
+            pager.setCurrentItem(1);
+            pager.setPageTransformer(true, new ZoomOutPageTransformer(0.90f, 0.7f));
+        }
     }
 }

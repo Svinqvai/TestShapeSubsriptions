@@ -13,6 +13,14 @@
         android:id="@+id/trialPeriodTv"
         android:layout_gravity="center_horizontal" />
 
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/pearImgView"
+        android:src="@drawable/pear"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal" />
+
     <learn2.program.testshapesubsriptions.subscriptions.CustomViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"

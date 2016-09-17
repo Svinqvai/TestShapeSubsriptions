@@ -21,7 +21,7 @@ public class BaseActivity extends AppCompatActivity {
 
     protected static final int RC_REQUEST = 17323;
     protected IabHelper mHelper;
-    protected  String PAYLOAD = "Shape";
+    protected  String PAYLOAD = "";
     protected String base44EncodedPublicKey = "BAQADIwme/hHtYNS0g56XBFiv07MXny5NVYimTWSTRjgigoHQO13k5FOPDq8/5gH7MnPQ53E1q4pKox63m02O1hds4StQT1AFNlagXNqEbrhy3x9vmLjpcJb7WH33osYmDXbfygeGewU0zg17Pl+wweNO1TOWkREZ+UKdU+l6iD/ImLy3lCnjfyVH3pl5opl5i79EZM6tudwe1crXZZfe3V7yRZuMqg9DwNHGd7VbGfW3VQfkpfGk++Hvulj9zQV69XkgPIrft/86Sl9VPyBTD0nMFggkWMhAfcN759gUM0/voqD1fx8s8dx3PWS4Xzo3pom7uZ8edFdgFUQ17NJ42ECPtgvAEQACKgCBIIMA8QACOAAFEQAB0w9GikhqkgBNAj";
 
     @Override
